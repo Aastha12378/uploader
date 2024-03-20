@@ -3,7 +3,7 @@ const fs = require('fs')
 const axios = require('axios')
 const https = require('https');
 const path = require('path');
-const { User } = require('../models');
+const { User, Schedule } = require('../models');
 const OAuth2 = google.auth.OAuth2;
 
 const oauth2Client = new OAuth2(
@@ -22,7 +22,7 @@ async function uploadVideo(videoDetail, scheduleDetail) {
   res.data.pipe(writer);
 
 
-  const userData = await User.find({ userId: videoDetail.userId }).exec();
+  const userData = await User.findOne({ userId: videoDetail.userId }).lean().exec();
 
   const tokens = userData?.tokens
   oauth2Client.setCredentials(tokens);
@@ -40,8 +40,8 @@ async function uploadVideo(videoDetail, scheduleDetail) {
         snippet: {
           title: videoDetail.title || 'Test Video Title',
           description: videoDetail.description || 'Test Video Description',
-          tags: ['Node.js', 'API Test', 'Upload'],
-          categoryId: '22',
+          // tags: ['Node.js', 'API Test', 'Upload'],
+          // categoryId: '22',
         },
         status: {
           privacyStatus: 'private',
@@ -56,16 +56,15 @@ async function uploadVideo(videoDetail, scheduleDetail) {
         return;
       }
 
-      const uploadedStatus = (await Schedule.findByIdAndUpdate(
-        scheduleDetail._id,
-        { $set: { isUploaded: true } },
-        { new: true }
-      )
-        .lean()
-        .exec());
-
       console.log('Uploaded video with ID:', uploadedStatus, data.data.id);
     });
+    const uploadedStatus = (await Schedule.findByIdAndUpdate(
+      scheduleDetail._id,
+      { $set: { isUploaded: true } },
+      { new: true }
+    )
+      .lean()
+      .exec());
   })
 }
 

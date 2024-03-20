@@ -20,7 +20,8 @@ async function checkAndUploadVideos() {
 
   if (schedules?.length > 0) {
     for (const scheduleDetail of schedules) {
-      const videoDetailsToUpload = await Video.find({ _id: scheduleDetail.videoId }).exec();
+      const videoDetailsToUpload = await Video.findOne({ _id: scheduleDetail.videoId }).lean()
+        .exec();
 
       await uploadVideo(videoDetailsToUpload, scheduleDetail);
     }
