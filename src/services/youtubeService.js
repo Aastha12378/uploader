@@ -15,7 +15,7 @@ const oauth2Client = new OAuth2(
 async function uploadVideo(videoDetail, scheduleDetail) {
   console.log('uploadVideo  videoDetail.videoUrl:', videoDetail.videoUrl)
 
-  const res = await axios.get(videoDetail.videoUrl, { responseType: 'stream', httpsAgent: new https.Agent({ rejectUnauthorized: false }) });
+  const res = await axios.get("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", { responseType: 'stream', httpsAgent: new https.Agent({ rejectUnauthorized: false }) });
 
   const filePath = path.join(__dirname, 'tempVideo.mp4'); // Save the video to a temporary file
   const writer = fs.createWriteStream(filePath);
