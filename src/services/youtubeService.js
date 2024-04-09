@@ -11,11 +11,12 @@ const oauth2Client = new OAuth2(
   process.env.YOUTUBE_CLIENT_SECRET,
   process.env.YOUTUBE_REDIRECT_URI
 );
+const s3BucketName = 'remotionlambda-useast1-4dgs67xvqf'
 
 async function uploadVideo(videoDetail, scheduleDetail) {
-  console.log('uploadVideo  videoDetail.videoUrl:', videoDetail.videoUrl)
+  console.log('uploadVideo  videoDetail.videoUrl:', videoDetail.renderId, s3BucketName)
 
-  const res = await axios.get("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", { responseType: 'stream', httpsAgent: new https.Agent({ rejectUnauthorized: false }) });
+  const res = await axios.get(`https://s3.us-east-1.amazonaws.com/${s3BucketName}/renders/${videoDetail.renderId}/out.mp4`, { responseType: 'stream', httpsAgent: new https.Agent({ rejectUnauthorized: false }) });
 
   const filePath = path.join(__dirname, 'tempVideo.mp4'); // Save the video to a temporary file
   const writer = fs.createWriteStream(filePath);
